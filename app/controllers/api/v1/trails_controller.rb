@@ -2,7 +2,7 @@ class Api::V1::TrailsController < ApplicationController
     before_action :find_trail, only:[:show, :update, :destroy]
 
     def index
-        @trails = Trail.all
+        @trails = Trail.all.where("user_id =?", params[:user_id]).order(:order)
         render json: @trails
     end
 
@@ -12,7 +12,9 @@ class Api::V1::TrailsController < ApplicationController
 
     def create
         @trail = Trail.new(trail_params)
+        @trail.order=1
         if @trail.save
+            Trail.where("user_id =?", params[:user_id]).where("id <>?", @trail.id ).map{|t| t.increment!(:order)}
             render json: @trail
         else
             render error: { error: 'Unable to create trail.'}, status: 400
@@ -20,7 +22,7 @@ class Api::V1::TrailsController < ApplicationController
     end
 
     def update
-        if @trail
+        if @trail.user_id==params[:user_id]
             @trail.update(trail_params)
             render json: { message: 'Trail succesfully updated.' }, status: 200
         else
@@ -40,11 +42,11 @@ class Api::V1::TrailsController < ApplicationController
     private
 
     def trail_params
-        params.require(:trail).permit(:trail, :lat, :lon, :user_id)
+        params.permit(:name, :lat, :lon, :order, :user_id)
     end
 
     def find_trail
-        @trail = Trail.find(params[:id])
+        @trail = Trail.where("id=?",params[:id]).where("user_id=?",params[:user_id])
     end
         
 end
