@@ -2,6 +2,10 @@ class Api::V1::TrailsController < ApplicationController
     before_action :find_trail, only:[:show, :update, :destroy]
 
     def index
+        subtract= Trail.where("user_id =?", params[:user_id]).order(:order).first.order-1
+        if subtract > 0
+            Trail.where("user_id =?", params[:user_id]).map{|t| t.increment!(:order, subtract * -1)}
+        end
         @trails = Trail.all.where("user_id =?", params[:user_id]).order(:order)
         render json: @trails
     end
@@ -32,7 +36,7 @@ class Api::V1::TrailsController < ApplicationController
 
     def destroy
         if @trail
-            @trail.destroy
+            @trail[0].destroy
             render json: { message: 'Trail succesfully deleted.' }, status: 200
         else
             render json: { error: 'Unable to delete trail.'}, status: 400
