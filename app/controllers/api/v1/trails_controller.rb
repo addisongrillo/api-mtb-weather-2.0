@@ -8,8 +8,15 @@ class Api::V1::TrailsController < ApplicationController
         end
         data={}
         @trails = Trail.all.where("user_id =?", params[:user_id]).order(:order)
-        
-        render json: @trails
+        data=[]
+        @trails.each  do |t|
+             data.push({
+                    trail:t,
+                    weather:t.weather
+             })
+         end
+
+        render json: data
         
     end
 
