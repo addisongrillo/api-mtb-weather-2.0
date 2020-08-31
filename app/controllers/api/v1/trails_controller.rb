@@ -6,12 +6,20 @@ class Api::V1::TrailsController < ApplicationController
         if subtract > 0
             Trail.where("user_id =?", params[:user_id]).map{|t| t.increment!(:order, subtract * -1)}
         end
+        data={}
         @trails = Trail.all.where("user_id =?", params[:user_id]).order(:order)
+        
         render json: @trails
+        
     end
 
     def show
-        render json: @trail
+        render json: #@trail.weather
+        {
+            trail:@trail,
+            weather:@trail.weather
+        }
+        
     end
 
     def create
@@ -50,7 +58,7 @@ class Api::V1::TrailsController < ApplicationController
     end
 
     def find_trail
-        @trail = Trail.where("id=?",params[:id]).where("user_id=?",params[:user_id])
+        @trail = Trail.where("id=?",params[:id]).where("user_id=?",params[:user_id]).first
     end
         
 end
