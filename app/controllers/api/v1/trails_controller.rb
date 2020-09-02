@@ -1,3 +1,5 @@
+require 'date'
+
 class Api::V1::TrailsController < ApplicationController
     before_action :find_trail, only:[:show, :update, :destroy]
 
@@ -10,9 +12,10 @@ class Api::V1::TrailsController < ApplicationController
         @trails = Trail.all.where("user_id =?", params[:user_id]).order(:order)
         data=[]
         @trails.each  do |t|
+            w=format_weather(t.weather)
              data.push({
                     trail:t,
-                    weather:t.weather
+                    weather:w
              })
          end
 
@@ -21,10 +24,11 @@ class Api::V1::TrailsController < ApplicationController
     end
 
     def show
-        render json: #@trail.weather
+         w=format_weather(@trail.weather)
+            render json:
         {
             trail:@trail,
-            weather:@trail.weather
+            weather:w
         }
         
     end
@@ -66,6 +70,15 @@ class Api::V1::TrailsController < ApplicationController
 
     def find_trail
         @trail = Trail.where("id=?",params[:id]).where("user_id=?",params[:user_id]).first
+    end
+
+    def format_weather(w)
+        w["current"]["dt"]=Time.at(w["current"]["dt"]+w["timezone_offset"]).in_time_zone('UTC').strftime("%I:%M %p")
+            w["current"]["sunrise"]=Time.at(w["current"]["sunrise"]+w["timezone_offset"]).in_time_zone('UTC').strftime("%I:%M %p")
+            w["current"]["sunset"]=Time.at(w["current"]["sunset"]+w["timezone_offset"]).in_time_zone('UTC').strftime("%I:%M %p")
+            w["hourly"].select do |h|
+                h["dt"]=Time.at(h["dt"]+w["timezone_offset"]).in_time_zone('UTC').strftime("%I:%M %p") 
+            end
     end
         
 end
