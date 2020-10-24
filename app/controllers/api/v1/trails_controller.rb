@@ -12,10 +12,10 @@ class Api::V1::TrailsController < ApplicationController
         @trails = Trail.all.where("user_id =?", params[:user_id]).order(:order)
         data=[]
         @trails.each  do |t|
-            w=format_weather(t.weather)
+            #w=format_weather(t.weather)
              data.push({
                     trail:t,
-                    weather:w
+                    weather:t.weather#w
              })
          end
 
@@ -24,11 +24,11 @@ class Api::V1::TrailsController < ApplicationController
     end
 
     def show
-         w=format_weather(@trail.weather)
+         #w=format_weather(@trail.weather)
             render json:
         {
             trail:@trail,
-            weather:w
+            weather:@trail.weather#w
         }
         
     end
@@ -55,11 +55,19 @@ class Api::V1::TrailsController < ApplicationController
 
     def destroy
         if @trail
-            @trail[0].destroy
+            @trail.destroy
             render json: { message: 'Trail succesfully deleted.' }, status: 200
         else
             render json: { error: 'Unable to delete trail.'}, status: 400
         end
+    end
+    def changeOrder
+            params[:trail][:order].each_with_index do |o, i|
+            @trail = Trail.where("id=?",o).where("user_id=?",params[:user_id]).first
+            @trail.order=i+1
+            @trail.save
+            end
+            render json: { message: 'Order Updated.'}, status: 200
     end
 
     private
