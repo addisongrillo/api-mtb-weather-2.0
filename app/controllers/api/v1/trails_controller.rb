@@ -4,13 +4,13 @@ class Api::V1::TrailsController < ApplicationController
     before_action :find_trail, only:[:show, :update, :destroy]
 
     def index
-        p "userid =" + @current_user.id.to_s
-        subtract= Trail.where("user_id =?", params[:user_id]).order(:order).first.order-1
+        #p "userid =" + @current_user.id.to_s
+        subtract= Trail.where("user_id =?", @current_user.id).order(:order).first.order-1
         if subtract > 0
-            Trail.where("user_id =?", params[:user_id]).map{|t| t.increment!(:order, subtract * -1)}
+            Trail.where("user_id =?", @current_user.id).map{|t| t.increment!(:order, subtract * -1)}
         end
         data={}
-        @trails = Trail.all.where("user_id =?", params[:user_id]).order(:order)
+        @trails = Trail.all.where("user_id =?", @current_user.id).order(:order)
         data=[]
         @trails.each  do |t|
             #w=format_weather(t.weather)
@@ -38,7 +38,7 @@ class Api::V1::TrailsController < ApplicationController
         @trail = Trail.new(trail_params)
         @trail.order=1
         if @trail.save
-            Trail.where("user_id =?", params[:user_id]).where("id <>?", @trail.id ).map{|t| t.increment!(:order)}
+            Trail.where("user_id =?", @current_user.id).where("id <>?", @trail.id ).map{|t| t.increment!(:order)}
             render json: @trail
         else
             render error: { error: 'Unable to create trail.'}, status: 400
@@ -46,7 +46,7 @@ class Api::V1::TrailsController < ApplicationController
     end
 
     def update
-        if @trail.user_id==params[:user_id]
+        if @trail.user_id==@current_user.id
             @trail.update(trail_params)
             render json: { message: 'Trail succesfully updated.' }, status: 200
         else
@@ -64,7 +64,7 @@ class Api::V1::TrailsController < ApplicationController
     end
     def changeOrder
             params[:trail][:order].each_with_index do |o, i|
-            @trail = Trail.where("id=?",o).where("user_id=?",params[:user_id]).first
+            @trail = Trail.where("id=?",o).where("user_id=?",@current_user.id).first
             @trail.order=i+1
             @trail.save
             end
@@ -78,7 +78,7 @@ class Api::V1::TrailsController < ApplicationController
     end
 
     def find_trail
-        @trail = Trail.where("id=?",params[:id]).where("user_id=?",params[:user_id]).first
+        @trail = Trail.where("id=?",params[:id]).where("user_id=?",@current_user.id).first
     end
 
     def format_weather(w)
