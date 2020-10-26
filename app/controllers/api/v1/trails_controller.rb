@@ -4,6 +4,7 @@ class Api::V1::TrailsController < ApplicationController
     before_action :find_trail, only:[:show, :update, :destroy]
 
     def index
+        p "userid =" + @current_user.id.to_s
         subtract= Trail.where("user_id =?", params[:user_id]).order(:order).first.order-1
         if subtract > 0
             Trail.where("user_id =?", params[:user_id]).map{|t| t.increment!(:order, subtract * -1)}

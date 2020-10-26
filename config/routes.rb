@@ -10,4 +10,5 @@ Rails.application.routes.draw do
       end
     end
   end
+  post 'authenticate', to: 'authentication#authenticate'
 end
