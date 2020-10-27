@@ -36,6 +36,7 @@ class Api::V1::TrailsController < ApplicationController
 
     def create
         @trail = Trail.new(trail_params)
+        @trail.user_id=@current_user.id
         @trail.order=1
         if @trail.save
             Trail.where("user_id =?", @current_user.id).where("id <>?", @trail.id ).map{|t| t.increment!(:order)}
