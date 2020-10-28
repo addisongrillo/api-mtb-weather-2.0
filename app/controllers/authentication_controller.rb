@@ -1,5 +1,3 @@
-require'json_web_token'
-
 class AuthenticationController < ApplicationController
     skip_before_action :authenticate_request
    
