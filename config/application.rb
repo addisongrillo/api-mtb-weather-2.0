@@ -22,8 +22,9 @@ Bundler.require(*Rails.groups)
 module ApiMtbWeather20
   class Application < Rails::Application
     config.load_defaults 6.0
-    # config.autoload_paths << Rails.root.join("lib")
-    # config.eager_load_paths << Rails.root.join("lib")
+    config.enable_dependency_loading = true
+    config.autoload_paths << Rails.root.join('lib')
+    
     config.watchable_dirs['lib'] = [:rb]
     # turn off CORS
     config.middleware.insert_before 0, Rack::Cors do
