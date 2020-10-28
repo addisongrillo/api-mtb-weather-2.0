@@ -1,3 +1,4 @@
+require_dependency 'json_web_token'
 class AuthenticateUser
     prepend SimpleCommand
   
