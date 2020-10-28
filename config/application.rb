@@ -23,8 +23,7 @@ module ApiMtbWeather20
   class Application < Rails::Application
     config.load_defaults 6.0
     # config.enable_dependency_loading = true
-    # config.eager_load_paths << Rails.root.join('app/lib')
-    config.eager_load_paths << Rails.root.join("/app/lib/")
+    config.eager_load_paths << Rails.root.join("/app/services/")
 
     # config.watchable_dirs['lib'] = [:rb]
     # turn off CORS
