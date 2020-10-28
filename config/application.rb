@@ -21,7 +21,7 @@ Bundler.require(*Rails.groups)
 
 module ApiMtbWeather20
   class Application < Rails::Application
-    config.autoload_paths << Rails.root.join('lib')
+    config.autoload_paths << Rails.root('lib')
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 
