@@ -1,7 +1,3 @@
-require 'jwt'
-
-
-
 class AuthenticateUser
     prepend SimpleCommand
   
@@ -9,14 +5,9 @@ class AuthenticateUser
       @username = username
       @password = password
     end
-    
-    def encode(payload, exp = 24.hours.from_now)
-      payload[:exp] = exp.to_i
-      JWT.encode(payload, Rails.application.secrets.secret_key_base)
-    end
-
+  
     def call
-      encode(user_id: user.id) if user
+      JsonWebToken.encode(user_id: user.id) if user
     end
   
     private
