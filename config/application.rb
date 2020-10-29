@@ -22,8 +22,8 @@ Bundler.require(*Rails.groups)
 module ApiMtbWeather20
   class Application < Rails::Application
     config.load_defaults "6.0"
-    # config.autoloader = :classic
-    
+    config.autoloader = :classic
+    config.autoload_paths << Rails.root.join('lib')
     # config.enable_dependency_loading = true
     # config.eager_load_paths << Rails.root.join("/app/lib/")
 
