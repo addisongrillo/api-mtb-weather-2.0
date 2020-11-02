@@ -35,7 +35,8 @@ class Api::V1::TrailsController < ApplicationController
            render json:
        {
            trail:@trail,
-           weather:@trail.weather_history
+           weather_y:@trail.weather_yesterday,
+           weather_t: @trail.weather_all_day
        }
        
    end
