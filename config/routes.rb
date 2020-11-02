@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       resources :trails do
         collection do
           post :changeOrder
+          get :history
         end
       end
     end

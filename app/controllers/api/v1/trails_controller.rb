@@ -1,10 +1,9 @@
 require 'date'
 
 class Api::V1::TrailsController < ApplicationController
-    before_action :find_trail, only:[:show, :update, :destroy]
+    before_action :find_trail, only:[:show, :update, :destroy, :history]
 
     def index
-        #p "userid =" + @current_user.id.to_s
         subtract= Trail.where("user_id =?", @current_user.id).order(:order).first.order-1
         if subtract > 0
             Trail.where("user_id =?", @current_user.id).map{|t| t.increment!(:order, subtract * -1)}
@@ -13,10 +12,9 @@ class Api::V1::TrailsController < ApplicationController
         @trails = Trail.all.where("user_id =?", @current_user.id).order(:order)
         data=[]
         @trails.each  do |t|
-            #w=format_weather(t.weather)
              data.push({
                     trail:t,
-                    weather:t.weather#w
+                    weather:t.weather
              })
          end
 
@@ -25,14 +23,22 @@ class Api::V1::TrailsController < ApplicationController
     end
 
     def show
-         #w=format_weather(@trail.weather)
             render json:
         {
             trail:@trail,
-            weather:@trail.weather#w
+            weather:@trail.weather
         }
         
     end
+
+    def history
+           render json:
+       {
+           trail:@trail,
+           weather:@trail.weather_history
+       }
+       
+   end
 
     def create
         @trail = Trail.new(trail_params)
